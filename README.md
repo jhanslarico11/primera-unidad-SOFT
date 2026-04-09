@@ -109,7 +109,7 @@ Aplicacion DEMO disponible en: <a href="https://ventas-app.norvicsoftware.com/" 
 Este proyecto ha sido posible gracias a los siguientes estudiantes, quienes colaboraron en el desarrollo este sistema de ventas para micromercados:
 
 - **Anyelo Jhans Sarmiento Larico**
-- **Jose Israel Ccoto Crux*
+- **Jose Israel Ccoto Cruz**
 
 
 ¡Gracias a todos por su valiosa contribución!
