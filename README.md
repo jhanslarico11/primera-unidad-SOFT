@@ -1,6 +1,6 @@
 <p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-## Sistema de Ventas para Micromercado
+## Sistema de Ventas 
 
 ## Tabla de Contenidos
 - [Introducción](#introducción)
@@ -10,11 +10,6 @@
 - [Instalación](#instalación)
 - [Creditos](#creditos)
 - [Licencia](#licencia)
-
-## Introducción
-Este proyecto fue desarrollado en el curso de <a href="https://norvicsoftware.com/curso-de-laravel-react-nextjs/" target="_blank">Laravel, React y NextJS</a>. es un sistema de ventas diseñado para un micromercado. Utiliza Laravel para el backend, React para el frontend y Next.js para consumir una API. El sistema permite la gestión de productos, categorías, clientes, proveedores, ventas, pedidos, usuarios, roles y permisos.
-
-Aplicacion DEMO disponible en: <a href="https://ventas-app.norvicsoftware.com/" target="_blank">SISTEMA DE VENTAS</a>
 
 ## Tecnologías
 
@@ -106,14 +101,9 @@ Aplicacion DEMO disponible en: <a href="https://ventas-app.norvicsoftware.com/" 
 
 ## Creditos
 
-Este proyecto ha sido posible gracias a los siguientes estudiantes, quienes colaboraron en el desarrollo este sistema de ventas para micromercados:
 
 - **Anyelo Jhans Sarmiento Larico**
 - **Jose Israel Ccoto Cruz**
 
 
-¡Gracias a todos por su valiosa contribución!
 
-## License
-
-Este proyecto está licenciado bajo la Licencia MIT.
