@@ -9,7 +9,6 @@
 - [Características](#características)
 - [Instalación](#instalación)
 - [Creditos](#creditos)
-- [Licencia](#licencia)
 
 ## Tecnologías
 
@@ -43,7 +42,7 @@
 1. Clona el repositorio:
 
     ```bash
-    git clone https://github.com/NorvicSoftware/ventas-web.git
+    git clone https://github.com/jhanslarico11/primera-unidad-SOFT.git
     cd ventas-web
     ```
 
@@ -69,7 +68,7 @@
 6. Crear la base de datos SQLite:
 
     ```bash
-    Crear el archivo database.sqlite en la carpara database
+    Crear el archivo database.mysql en la carpara database
     ```    
 
 7. Ejecuta las migraciones y seeders:
