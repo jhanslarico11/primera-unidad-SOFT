@@ -108,32 +108,8 @@ Aplicacion DEMO disponible en: <a href="https://ventas-app.norvicsoftware.com/" 
 
 Este proyecto ha sido posible gracias a los siguientes estudiantes, quienes colaboraron en el desarrollo este sistema de ventas para micromercados:
 
-- **Americo Álvarez**
-- **Anuar Rodriguez Medina**
-- **Cristian Barrios**
-- **Enrrique Arrazola**
-- **Eusebio Panozo**
-- **Georgina Wendy Perez**
-- **Gilmar Casano**
-- **Jorge Armando Pico**
-- **Juan Gabriel Llanos**
-- **Juan Manuel Camacho**
-- **Luis Beltran**
-- **Luis Fernando Quispe**
-- **Rodrigo Montaño**
-- **Rolando Cuevas**
-- **Vicente Flores**
-- **Victor Seleme**
-- **Willian Castro**
-- **Zara Zurita**
-- **Ronald Guerra**
-- **Yuri Rene Acurio**
-- **Richard Tejeda**
-- **Edwind Juarez**
-- **Yesmani Fernandez**
-- **Jesús Guevara**
-- **Grober Mendieta**
-- **Carlos Manuel**
+- **Anyelo Jhans Sarmiento Larico**
+- **Jose Israel Ccoto Crux*
 
 
 ¡Gracias a todos por su valiosa contribución!
