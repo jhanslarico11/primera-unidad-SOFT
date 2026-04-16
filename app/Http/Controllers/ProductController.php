@@ -19,7 +19,7 @@ class ProductController extends Controller
      */
     public function index()
     {
-        // $products = DB::table('products')->join('categories', 'categories.id', '=', 'products.category_id')->select('products.*', 'categories.name as category_name')->get();
+
         $categories = Category::all();
         $products = Product::with(['category', 'image'])->orderBy('name', 'ASC')->get();
         return Inertia::render('Products/Index', ['products' => $products, 'categories' => $categories]);
@@ -149,9 +149,11 @@ class ProductController extends Controller
         }
     }
 
-    public function load(Request $request)
+    /**
+     * Load products from another database.
+     */
+    public function load()  // ← CORREGIDO: Eliminado el parámetro $request
     {
-
         try {
             $products = DB::connection('mysql2')->select('SELECT * FROM productos');
 

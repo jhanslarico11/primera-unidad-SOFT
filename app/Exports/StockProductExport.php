@@ -16,7 +16,6 @@ class StockProductExport implements FromView
     {
         $products = Product::with(['category'])->get();
         return view('reports.products.excel', ['products' => $products]);
-        
-        // return Product::with(['category'])->select('name', 'quantity')->get();
-    }
+
+        }
 }

@@ -15,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all(); //orderBy('name', 'ASC')->get();
+        $categories = Category::all(); 
         return response()->json($categories);
     }
 
