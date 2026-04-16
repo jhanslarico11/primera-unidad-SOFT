@@ -15,7 +15,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        $categories = Category::all(); 
+        $categories = Category::all();
         return response()->json($categories);
     }
 
@@ -30,7 +30,7 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->save();
 
-            return response()->json(['status' => true, 'message' => 'La categoria fue resgitrada con exito']);
+            return response()->json(['status' => true, 'message' => 'La categoria fue registrada con exito']);
         } catch (Exception $exc) {
             return response()->json(['status' => false, 'message' => 'Existe errores al registrar la categoria' . $exc->getMessage()]);
         }
@@ -50,14 +50,13 @@ class CategoryController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        try{
+        try {
             $category = Category::find($id);
             $category->name = $request->name;
             $category->description = $request->description;
             $category->save();
             return response()->json(['status' => true, 'message' => 'La categoria fue actualizada con exito']);
-        }
-        catch(Exception $exc) {
+        } catch (Exception $exc) {
             return response()->json(['status' => false, 'message' => 'Error al actualizar la categoria']);
         }
     }
@@ -69,7 +68,6 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         $category->delete();
-        return response()->json(['status' => true, 'message' => 'La categoria fue eliminda con exito']);
-
+        return response()->json(['status' => true, 'message' => 'La categoria fue eliminada con exito']);
     }
 }

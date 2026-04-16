@@ -9,9 +9,11 @@ use Inertia\Inertia;
 
 class TotalSaleController extends Controller
 {
+    private const REPORT_SALES_VIEW = 'Reports/Sales/List';
+
     public function list(){
         $sales = Sale::with(['client', 'user', 'products'])->get();
-        return Inertia::render('Reports/Sales/List', ['sales' => $sales ]);
+        return Inertia::render(self::REPORT_SALES_VIEW, ['sales' => $sales ]);
     }
 
     public function search(Request $request)
@@ -31,9 +33,9 @@ class TotalSaleController extends Controller
             }
             $query->whereBetween('sales.sale_date', [$request->init_date, $request->end_date]);
             $sales = $query->get();
-            return Inertia::render('Reports/Sales/List', ['status' => true, 'action' => 1, 'message' => 'Ok', 'sales' => $sales]);
+            return Inertia::render(self::REPORT_SALES_VIEW, ['status' => true, 'action' => 1, 'message' => 'Ok', 'sales' => $sales]);
         } catch (\Exception $exc){
-            return Inertia::render('Reports/Sales/List', ['status' => false, 'action' => 0, 'message' => 'Error al procesar (Servidor)' . $exc->getMessage()]);
+            return Inertia::render(self::REPORT_SALES_VIEW, ['status' => false, 'action' => 0, 'message' => 'Error al procesar (Servidor)' . $exc->getMessage()]);
         }
     }
 }
