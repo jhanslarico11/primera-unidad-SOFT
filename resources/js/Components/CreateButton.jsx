@@ -1,4 +1,6 @@
-export default function CreateButton({ className = '', disabled, children, ...props  }) {
+import PropTypes from 'prop-types';
+
+export default function CreateButton({ className = '', disabled, children, ...props }) {
     return (
         <button
             {...props}
@@ -13,3 +15,15 @@ export default function CreateButton({ className = '', disabled, children, ...pr
         </button>
     );
 }
+
+CreateButton.propTypes = {
+    className: PropTypes.string,
+    disabled: PropTypes.bool,
+    children: PropTypes.node,
+    // Para ...props puedes agregar más validaciones si es necesario
+};
+
+CreateButton.defaultProps = {
+    className: '',
+    disabled: false,
+};
