@@ -36,7 +36,7 @@ class RoleController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:roles,name',
         ]);
 
         DB::beginTransaction();
@@ -48,21 +48,36 @@ class RoleController extends Controller
             if ($request->has('permissions')) {
                 $role->syncPermissions($request->permissions);
             }
+
             DB::commit();
 
-            return Redirect::route('roles.index')->with(['status' => true, 'message' => 'El rol ' . $role->name . ' fue registrado correctamente']);
+            return Redirect::route('roles.index')->with([
+                'status' => true,
+                'message' => 'El rol ' . $role->name . ' fue registrado correctamente'
+            ]);
         } catch (Exception $exc) {
             DB::rollBack();
-            return Redirect::route('roles.index')->with(['status' => false, 'message' => 'Existen errores en el formulario.']);
+            return Redirect::route('roles.index')->with([
+                'status' => false,
+                'message' => 'Error al registrar el rol: ' . $exc->getMessage()
+            ]);
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show()  // ← CORREGIDO: Eliminado el parámetro "$id"
+    public function show(string $id)
     {
-        //
+        try {
+            $role = Role::with('permissions')->findOrFail($id);
+            return response()->json($role);
+        } catch (Exception $exc) {
+            return Redirect::route('roles.index')->with([
+                'status' => false,
+                'message' => 'Rol no encontrado'
+            ]);
+        }
     }
 
     /**
@@ -70,7 +85,20 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        try {
+            $role = Role::with('permissions')->findOrFail($id);
+            $permissions = Permission::all();
+
+            return Inertia::render('Roles/Edit', [
+                'role' => $role,
+                'permissions' => $permissions
+            ]);
+        } catch (Exception $exc) {
+            return Redirect::route('roles.index')->with([
+                'status' => false,
+                'message' => 'Rol no encontrado'
+            ]);
+        }
     }
 
     /**
@@ -79,26 +107,33 @@ class RoleController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'name' => 'required',
+            'name' => 'required|unique:roles,name,' . $id,
         ]);
+
         DB::beginTransaction();
         try {
-            $role = Role::find($id);
+            $role = Role::findOrFail($id);
             $role->name = $request->name;
             $role->save();
-
 
             if ($request->has('permissions')) {
                 $role->syncPermissions($request->permissions);
             } else {
                 $role->syncPermissions([]);
             }
+
             DB::commit();
 
-            return Redirect::route('roles.index')->with(['status' => true, 'message' => 'El rol ' . $role->name . ' fue actualizado correctamente']);
+            return Redirect::route('roles.index')->with([
+                'status' => true,
+                'message' => 'El rol ' . $role->name . ' fue actualizado correctamente'
+            ]);
         } catch (Exception $exc) {
             DB::rollBack();
-            return Redirect::route('roles.index')->with(['status' => false, 'message' => 'Existen errores en el formulario.']);
+            return Redirect::route('roles.index')->with([
+                'status' => false,
+                'message' => 'Error al actualizar el rol: ' . $exc->getMessage()
+            ]);
         }
     }
 
@@ -107,6 +142,31 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $role = Role::findOrFail($id);
+            $roleName = $role->name;
+
+            // Verificar si es un rol protegido (opcional)
+            if (in_array($roleName, ['admin', 'super-admin'])) {
+                throw new Exception('No se puede eliminar un rol protegido');
+            }
+
+            $role->syncPermissions([]); // Eliminar relaciones de permisos
+            $role->delete();
+
+            DB::commit();
+
+            return Redirect::route('roles.index')->with([
+                'status' => true,
+                'message' => 'El rol ' . $roleName . ' fue eliminado correctamente'
+            ]);
+        } catch (Exception $exc) {
+            DB::rollBack();
+            return Redirect::route('roles.index')->with([
+                'status' => false,
+                'message' => 'Error al eliminar el rol: ' . $exc->getMessage()
+            ]);
+        }
     }
 }
