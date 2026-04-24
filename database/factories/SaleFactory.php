@@ -19,10 +19,9 @@ class SaleFactory extends Factory
     public function definition(): array
     {
         return [
-            'sale_date' => $this->faker->dateTime,
-            'user_id' => User::all()->random()->id,
-            'client_id' => Client::all()->random()->id,
-
+            'sale_date' => $this->faker->dateTimeBetween('-1 month', 'now'),
+            'user_id' => User::factory(),  // ✅ Crea un usuario automáticamente
+            'client_id' => Client::factory(), // ✅ Crea un cliente automáticamente
         ];
     }
 }
