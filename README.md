@@ -105,4 +105,5 @@
 - **Jose Israel Ccoto Cruz**
 
 ## Actualización Sprint 1
+## Configuración k6 completada
 
