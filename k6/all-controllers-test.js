@@ -1,4 +1,4 @@
-// k6/scenarios/all-controllers-test.js
+// k6/all-controllers-test.js
 import http from 'k6/http';
 import { check, sleep, group } from 'k6';
 import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
@@ -17,7 +17,7 @@ export const options = {
   ],
 };
 
-export default function () {
+export default function runAllControllersTest() {
   group('01_Categories', () => {
     check(http.get(BASE_URL + '/categories'), { 'GET /categories': r => r.status === 200 });
     check(http.get(BASE_URL + '/categories/create'), { 'GET /categories/create': r => r.status === 200 });
