@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y \
     libonig-dev \
     libxml2-dev \
     nodejs \
-    npm
+    npm \
+    && rm -rf /var/lib/apt/lists/*
 
 # Instalar extensiones PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -24,13 +25,13 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www
 
-# Copiar archivos
+# Copiar el proyecto
 COPY . .
 
 # Instalar dependencias PHP
 RUN composer install --no-dev --optimize-autoloader
 
-# Instalar dependencias Node
+# Instalar dependencias de Node
 RUN npm install
 
 # Compilar Vite
@@ -39,11 +40,6 @@ RUN npm run build
 # Permisos
 RUN chmod -R 775 storage bootstrap/cache
 
-# Generar cachés
-RUN php artisan config:cache || true
-RUN php artisan route:cache || true
-RUN php artisan view:cache || true
-
 EXPOSE 10000
 
-CMD exec php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
+CMD php artisan optimize:clear && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}
