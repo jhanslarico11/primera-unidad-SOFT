@@ -13,7 +13,7 @@ namespace App\Http\Controllers;
  * )
  *
  * @OA\Server(
- *     url="http://localhost:8000",
+ *     url="https://primera-unidad-soft.onrender.com",
  *     description="Servidor local"
  * )
  */
