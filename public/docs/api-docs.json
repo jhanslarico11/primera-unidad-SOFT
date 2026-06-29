@@ -1,0 +1,34 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Ventas Web",
+    "version": "1.0.0"
+  },
+  "servers": [{ "url": "http://localhost:8000/api" }],
+  "paths": {
+    "/categories": {
+      "get": { "tags": ["Categorias"], "summary": "Listar categorias", "responses": { "200": { "description": "OK" } } }
+    },
+    "/categories/create": {
+      "post": { "tags": ["Categorias"], "summary": "Crear categoria", "responses": { "201": { "description": "Created" } } }
+    },
+    "/categories/show/{id}": {
+      "get": { "tags": ["Categorias"], "summary": "Mostrar categoria", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/categories/edit/{id}": {
+      "put": { "tags": ["Categorias"], "summary": "Editar categoria", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/categories/delete/{id}": {
+      "delete": { "tags": ["Categorias"], "summary": "Eliminar categoria", "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "integer" } }], "responses": { "200": { "description": "OK" } } }
+    },
+    "/reports/stockProducts": {
+      "get": { "tags": ["Reportes"], "summary": "Reporte stock", "responses": { "200": { "description": "OK" } } }
+    },
+    "/reports/clients": {
+      "get": { "tags": ["Reportes"], "summary": "Reporte clientes", "responses": { "200": { "description": "OK" } } }
+    },
+    "/user": {
+      "get": { "tags": ["Auth"], "summary": "Usuario autenticado", "responses": { "200": { "description": "OK" } } }
+    }
+  }
+}

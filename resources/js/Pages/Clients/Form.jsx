@@ -9,15 +9,24 @@ import InputError from "@/Components/InputError";
 import SecondaryButton from "@/Components/SecondaryButton";
 import PrimaryButton from "@/Components/PrimaryButton";
 import { toast } from 'react-toastify';
+import { useDniAutocomplete } from "@/dni-autocomplete";
 
 export default function Form({ id = 0, client = {} }) {
     const [showModal, setShowModal] = useState(false);
     const { data, setData, post, put, errors, reset, clearErrors } = useForm({
         dni: '',
         full_name: '',
+        nombres: '',
+        apellido_paterno: '',
+        apellido_materno: '',
         cell_phone: '',
         address: '',
         email: '',
+    });
+    const { dniStatus, dniLoading, handleDniChange } = useDniAutocomplete({
+        data,
+        setData,
+        targetField: "full_name",
     });
 
     function openModal() {
@@ -26,6 +35,9 @@ export default function Form({ id = 0, client = {} }) {
             setData({
                 'dni': client.dni,
                 'full_name': !client.full_name ? '' : client.full_name,
+                'nombres': !client.nombres ? '' : client.nombres,
+                'apellido_paterno': !client.apellido_paterno ? '' : client.apellido_paterno,
+                'apellido_materno': !client.apellido_materno ? '' : client.apellido_materno,
                 'cell_phone': !client.cell_phone ? '' : client.cell_phone,
                 'address': !client.address ? '' : client.address,
                 'email': !client.email ? '' : client.email,
@@ -40,11 +52,9 @@ export default function Form({ id = 0, client = {} }) {
 
     const submitCliente = (e) => {
         e.preventDefault();
-        console.log(data);
         if (id === 0) {
             post(route("clients.store"), {
                 onSuccess: (res) => {
-                    console.log("ok", res);
                     if(res.props.flash.status){
                         toast.success(res.props.flash.message);
                     }
@@ -55,14 +65,12 @@ export default function Form({ id = 0, client = {} }) {
                     closeModal();
                 },
                 onError: (error) => {
-                    console.log("error", error);
                     toast.error('Existen errores en el formulario.');
                 },
             });
         } else {
             put(route("clients.update", id), {
                 onSuccess: (res) => {
-                    console.log("ok", res);
                     if(res.props.flash.status){
                         toast.success(res.props.flash.message);
                     }
@@ -72,7 +80,6 @@ export default function Form({ id = 0, client = {} }) {
                     closeModal();
                 },
                 onError: (error) => {
-                    console.log("error", error);
                     toast.error('Existen errores en el formulario.');
                 },
             });
@@ -106,17 +113,25 @@ export default function Form({ id = 0, client = {} }) {
                     <form>
                         <InputLabel value="DNI" />
                         <TextInput
-                            className="block w-full mb-2"
                             type="text"
                             name="dni"
                             placeholder="DNI"
-                            maxLength={15}
+                            maxLength={8}
                             value={data.dni}
-                            onChange={(e) => setData("dni", e.target.value)}
+                            onChange={handleDniChange}
+                            className="dni-autocomplete block w-full mb-2"
                         />
+                        {(dniLoading || dniStatus) && (
+                            <p className="mb-2 text-sm text-slate-500">
+                                {dniLoading ? "Buscando..." : dniStatus}
+                            </p>
+                        )}
                         {errors.dni && (
                             <InputError message={errors.dni}></InputError>
                         )}
+                        <input type="hidden" name="nombres" value={data.nombres} />
+                        <input type="hidden" name="apellido_paterno" value={data.apellido_paterno} />
+                        <input type="hidden" name="apellido_materno" value={data.apellido_materno} />
                         <InputLabel value="Nombre Completo" />
                         <TextInput
                             className="block w-full mb-2"

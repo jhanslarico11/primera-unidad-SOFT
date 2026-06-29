@@ -38,12 +38,24 @@ class SaleController extends Controller
 
         DB::beginTransaction();
         try {
+            $request->validate([
+                'dni' => 'required|digits:8',
+                'client_name' => 'required|string|max:75',
+                'nombres' => 'nullable|string|max:100',
+                'apellido_paterno' => 'nullable|string|max:100',
+                'apellido_materno' => 'nullable|string|max:100',
+                'products' => 'required|array|min:1',
+            ]);
+
             $client = Client::where('dni', '=', $request->dni)->first();
 
             if (!$client) {
                 $client = new Client();
                 $client->dni = $request->dni;
                 $client->full_name = $request->client_name;
+                $client->nombres = $request->nombres;
+                $client->apellido_paterno = $request->apellido_paterno;
+                $client->apellido_materno = $request->apellido_materno;
                 $client->save();
             }
 
@@ -106,8 +118,13 @@ class SaleController extends Controller
      */
     public function destroy(string $id)
     {
-        $sale = Sale::find($id);
-        $sale->delete();
-        return Redirect::route('sales.index');
+        try {
+            $sale = Sale::findOrFail($id);
+            $sale->delete();
+
+            return Redirect::route('dashboard')->with(['status' => true, 'message' => 'La venta fue eliminada correctamente']);
+        } catch (Exception $exc) {
+            return Redirect::route('dashboard')->with(['status' => false, 'message' => 'No se pudo eliminar la venta.']);
+        }
     }
 }

@@ -8,10 +8,25 @@ import TextInput from "@/Components/TextInput";
 import PrimaryButton from "@/Components/PrimaryButton";
 import SecondaryButton from "@/Components/SecondaryButton";
 import InputError from "@/Components/InputError";
+import { useDniAutocomplete } from "@/dni-autocomplete";
+
+const IGV_RATE = 0.18;
 
 export default function Form({ id = 0, products = [] }) {
     const [showModal, setShowModal] = useState(false);
-    const { data, setData, post, errors, reset, clearErrors } = useForm({ dni: '', client_name: '', products: [] });
+    const { data, setData, post, errors, reset, clearErrors } = useForm({
+        dni: '',
+        client_name: '',
+        nombres: '',
+        apellido_paterno: '',
+        apellido_materno: '',
+        products: [],
+    });
+    const { dniStatus, dniLoading, handleDniChange } = useDniAutocomplete({
+        data,
+        setData,
+        targetField: "client_name",
+    });
 
     function openModal() {
         setShowModal(true);
@@ -23,20 +38,25 @@ export default function Form({ id = 0, products = [] }) {
         reset();
     }
 
+    const calculateSubtotal = () => {
+        return products.reduce((total, product) => total + (product.sale_price * product.quantity), 0);
+    }
+
+    const calculateIgv = () => {
+        return calculateSubtotal() * IGV_RATE;
+    }
+
     const calculateTotal = () => {
-        return products.reduce((total, product) => total + (product.sale_price * product.quantity), 0).toFixed(2);
+        return calculateSubtotal() + calculateIgv();
     }
 
     const submitsale = (e) => {
         e.preventDefault();
         data.products = products;
-        console.log(data);
         post(route('sales.store'), {
             onSuccess: (res) => {
-                console.log('OK', res);
                 closeModal();
             },
-            onError: (error) => console.log('error: ', error)
         })
     }
 
@@ -54,8 +74,16 @@ export default function Form({ id = 0, products = [] }) {
                     <form>
                         <div>
                             <InputLabel value="Codigo cliente" />
-                            <TextInput className="block w-full mb-2" type="text" name="dni" maxLength={35} value={data.dni} onChange={(e) => setData('dni', e.target.value)} />
+                            <TextInput className="dni-autocomplete block w-full mb-2" type="text" name="dni" maxLength={8} value={data.dni} onChange={handleDniChange} />
+                            {(dniLoading || dniStatus) && (
+                                <p className="mb-2 text-sm text-slate-500">
+                                    {dniLoading ? "Buscando..." : dniStatus}
+                                </p>
+                            )}
                             {errors.dni && <InputError message={errors.dni} />}
+                            <input type="hidden" name="nombres" value={data.nombres} />
+                            <input type="hidden" name="apellido_paterno" value={data.apellido_paterno} />
+                            <input type="hidden" name="apellido_materno" value={data.apellido_materno} />
                         </div>
                         <div>
                             <InputLabel value="Nombre cliente" />
@@ -63,27 +91,35 @@ export default function Form({ id = 0, products = [] }) {
                             {errors.client_name && <InputError message={errors.client_name} />}
                         </div>
 
-                        <table className="min-w-full mb-4">
+                        <table className="mb-4 min-w-full text-sm">
                             <thead>
-                                <tr>
-                                    <th className="text-left">Producto</th>
-                                    <th className="text-left">Cantidad</th>
-                                    <th className="text-left">Precio Unitario</th>
-                                    <th className="text-left">Sub Total</th>
+                                <tr className="border-b border-slate-200">
+                                    <th className="py-2 text-left">Producto</th>
+                                    <th className="py-2 text-left">Cantidad</th>
+                                    <th className="py-2 text-left">Precio Unitario</th>
+                                    <th className="py-2 text-left">Sub Total</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {products.map((product, index) => (
-                                    <tr key={product.id || index}>
-                                        <td>{product.name}</td>
-                                        <td>{product.quantity}</td>
-                                        <td>${product.sale_price}</td>
-                                        <td>${(product.quantity * product.sale_price).toFixed(2)}</td>
+                                    <tr key={product.id || index} className="border-b border-slate-100">
+                                        <td className="py-2">{product.name}</td>
+                                        <td className="py-2">{product.quantity}</td>
+                                        <td className="py-2">${Number(product.sale_price).toFixed(2)}</td>
+                                        <td className="py-2">${(product.quantity * product.sale_price).toFixed(2)}</td>
                                     </tr>
                                 ))}
-                                <tr key="total-row">
-                                    <td colSpan="3" className="text-right font-bold">TOTAL:</td>
-                                    <td className="font-bold">${calculateTotal()}</td>
+                                <tr>
+                                    <td colSpan="3" className="pt-3 text-right font-semibold text-slate-600">Subtotal:</td>
+                                    <td className="pt-3 font-semibold">${calculateSubtotal().toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3" className="text-right font-semibold text-slate-600">IGV (18%):</td>
+                                    <td className="font-semibold">${calculateIgv().toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td colSpan="3" className="text-right text-base font-bold text-slate-900">Total:</td>
+                                    <td className="text-base font-bold text-slate-900">${calculateTotal().toFixed(2)}</td>
                                 </tr>
                             </tbody>
                         </table>

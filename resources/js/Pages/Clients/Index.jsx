@@ -1,92 +1,84 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { usePage, Link } from "@inertiajs/react";
+import { Head, Link, usePage } from "@inertiajs/react";
 import { useState } from "react";
-import Form from "./Form";
+import DeleteButton from "@/Components/DeleteButton";
 import TextInput from "@/Components/TextInput";
+import Form from "./Form";
 
 export default function Index({ auth }) {
     const { clients } = usePage().props;
     const [searchClient, setSearchClient] = useState("");
-    console.log(clients);
+    const canDelete = auth.user?.permissions?.includes("Eliminar clientes");
+
     const filteredClient = clients.data.filter((client) =>
-        client.full_name.toLowerCase().includes(searchClient.toLowerCase())
+        client.full_name.toLowerCase().includes(searchClient.toLowerCase()) ||
+        (client.dni || "").includes(searchClient)
     );
+
     return (
-        <AuthenticatedLayout user={auth.user} header={<h2 className="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Clientes</h2>}>
-            <div className="py-12">
-                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div className="p-6 text-gray-900 dark:text-gray-100">
-                            <div className="flex justify-between items-center pb-2">
-                                <TextInput
-                                    isFocused={true}
-                                    type="text"
-                                    name="search"
-                                    placeholder="Buscar"
-                                    onChange={(event) =>
-                                        setSearchClient(event.target.value)
-                                    }
-                                ></TextInput>
-                                <Form />
-                            </div>
-                            <div>
-                                <table className="min-w-full text-gray-800 dark:text-gray-200">
-                                    <thead className="uppercase text-white bg-gray-500">
-                                        <tr>
-                                            <th className="bg-gray-500 py-2">
-                                                DNI
-                                            </th>
-                                            <th className="bg-gray-500 py-2">
-                                                Nombre
-                                            </th>
-                                            <th className="bg-gray-500 py-2">
-                                                Celular
-                                            </th>
-                                            <th className="bg-gray-500 py-2">
-                                                Dirección
-                                            </th>
-                                            <th className="bg-gray-500 py-2">
-                                                Acciones
-                                            </th>
+        <AuthenticatedLayout user={auth.user} header="Clientes">
+            <Head title="Clientes" />
+            <div className="page-wrap">
+                <div className="page-container">
+                    <div className="panel">
+                        <div className="panel-toolbar">
+                            <TextInput
+                                isFocused={true}
+                                type="text"
+                                name="search"
+                                placeholder="Buscar cliente..."
+                                className="w-full sm:w-80"
+                                onChange={(event) => setSearchClient(event.target.value)}
+                            />
+                            <Form />
+                        </div>
+                        <div className="table-wrap">
+                            <table className="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>DNI</th>
+                                        <th>Nombre</th>
+                                        <th>Celular</th>
+                                        <th>Direccion</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredClient.map((client) => (
+                                        <tr key={client.id}>
+                                            <td className="font-medium text-slate-900">{client.dni}</td>
+                                            <td>{client.full_name}</td>
+                                            <td>{client.cell_phone}</td>
+                                            <td>{client.address}</td>
+                                            <td>
+                                                <div className="action-row">
+                                                    <Form id={client.id} client={client} />
+                                                    {canDelete && (
+                                                        <DeleteButton
+                                                            url={route("clients.destroy", client.id)}
+                                                            label={`el cliente ${client.full_name}`}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody>
-                                        {filteredClient.map((client) => (
-                                            <tr
-                                                key={client.id}
-                                                className="hover:bg-gray-200 dark:hover:bg-gray-900 py-2 px-3 border border-gray-300"
-                                            >
-                                                <td className="py-2 px-3 boder border-gray-300">
-                                                    {client.dni}
-                                                </td>
-                                                <td className="py-2 px-3 border border-gray-300">
-                                                    {client.full_name}
-                                                </td>
-                                                <td className="py-2 px-3 border border-gray-300">
-                                                    {client.cell_phone}
-                                                </td>
-                                                <td className="py-2 px-3 border border-gray-300">
-                                                    {client.address}
-                                                </td>
-                                                <td className="py-2 px-3 border border-gray-300">
-                                                    <Form
-                                                        id={client.id}
-                                                        client={client}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                <div className=" pt-2">
-                                    {clients.links.map((link, index) => (
-                                        <Link key={index} href={link.url} dangerouslySetInnerHTML={{ __html: link.label }} 
-                                        className={` px-2 py-1 mx-2 hover:bg-slate-500 ${link.active ? 'bg-slate-900 text-white' : 'bg-slate-300'}`}/>
-                                        // <a key={index} href={link.url} dangerouslySetInnerHTML={{ __html: link.label }} 
-                                        // className={` px-2 py-1 mx-2 hover:bg-slate-500 ${link.active ? 'bg-slate-900 text-white' : 'bg-slate-300'}`}    />
                                     ))}
-                                </div>
-                            </div>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div className="flex flex-wrap gap-2 border-t border-slate-200 bg-slate-50 px-5 py-4">
+                            {clients.links.map((link, index) => (
+                                <Link
+                                    key={index}
+                                    href={link.url}
+                                    dangerouslySetInnerHTML={{ __html: link.label }}
+                                    className={`rounded-md px-3 py-1.5 text-sm transition ${
+                                        link.active
+                                            ? "bg-slate-900 text-white"
+                                            : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-100"
+                                    } ${!link.url ? "pointer-events-none opacity-40" : ""}`}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

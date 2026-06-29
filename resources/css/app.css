@@ -1,3 +1,55 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    body {
+        @apply bg-slate-100 text-slate-900 antialiased;
+    }
+}
+
+@layer components {
+    .page-wrap {
+        @apply py-6 sm:py-8;
+    }
+
+    .page-container {
+        @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8;
+    }
+
+    .panel {
+        @apply overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm;
+    }
+
+    .panel-toolbar {
+        @apply flex flex-col gap-3 border-b border-slate-200 bg-white px-5 py-4 sm:flex-row sm:items-center sm:justify-between;
+    }
+
+    .table-wrap {
+        @apply overflow-x-auto;
+    }
+
+    .data-table {
+        @apply min-w-full divide-y divide-slate-200 text-sm;
+    }
+
+    .data-table thead {
+        @apply bg-slate-50;
+    }
+
+    .data-table th {
+        @apply px-4 py-3 text-left text-xs font-semibold uppercase text-slate-500;
+    }
+
+    .data-table td {
+        @apply border-t border-slate-100 px-4 py-3 text-slate-700;
+    }
+
+    .data-table tbody tr {
+        @apply bg-white transition-colors hover:bg-slate-50;
+    }
+
+    .action-row {
+        @apply flex items-center gap-2;
+    }
+}

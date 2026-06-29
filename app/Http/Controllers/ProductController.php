@@ -129,10 +129,15 @@ class ProductController extends Controller
      */
     public function destroy(string $id)
     {
-        $product = Product::find($id);
-        $product->delete();
+        try {
+            $product = Product::findOrFail($id);
+            $productName = $product->name;
+            $product->delete();
 
-        return Redirect::route('products.index');
+            return Redirect::route('products.index')->with(['status' => true, 'message' => 'El producto ' . $productName . ' fue eliminado correctamente']);
+        } catch (Exception $exc) {
+            return Redirect::route('products.index')->with(['status' => false, 'message' => 'No se pudo eliminar el producto.']);
+        }
     }
 
 

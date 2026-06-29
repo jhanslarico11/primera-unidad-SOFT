@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Buy;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -77,8 +78,13 @@ class BuyController extends Controller
      */
     public function destroy(string $id)
     {
-        $buy = Buy::find($id);
-        $buy->delete();
-        return Redirect::route('providers.index');
+        try {
+            $buy = Buy::findOrFail($id);
+            $buy->delete();
+
+            return Redirect::route('dashboard')->with(['status' => true, 'message' => 'La compra fue eliminada correctamente']);
+        } catch (Exception $exc) {
+            return Redirect::route('dashboard')->with(['status' => false, 'message' => 'No se pudo eliminar la compra.']);
+        }
     }
 }

@@ -3,8 +3,10 @@
 /public/build
 /public/hot
 /public/storage
+/results
 /storage/*.key
 /vendor
+/php
 .env
 .env.backup
 .env.production

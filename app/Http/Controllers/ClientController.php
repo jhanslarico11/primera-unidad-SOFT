@@ -35,14 +35,20 @@ class ClientController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'dni' => 'required',
+            'dni' => 'required|digits:8|unique:clients,dni',
             'full_name' => 'required',
+            'nombres' => 'nullable|string|max:100',
+            'apellido_paterno' => 'nullable|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
             'email' => 'nullable|email'
         ]);
         try {
             $client = new Client();
             $client->dni = $request->dni;
             $client->full_name = $request->full_name;
+            $client->nombres = $request->nombres;
+            $client->apellido_paterno = $request->apellido_paterno;
+            $client->apellido_materno = $request->apellido_materno;
             $client->cell_phone = $request->cell_phone;
             $client->address = $request->address;
             $client->email = $request->email;
@@ -82,14 +88,20 @@ class ClientController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
-            'dni' => 'required',
+            'dni' => 'required|digits:8|unique:clients,dni,' . $id,
             'full_name' => 'required',
+            'nombres' => 'nullable|string|max:100',
+            'apellido_paterno' => 'nullable|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
             'email' => 'nullable|email'
         ]);
         try {
             $client = Client::find($id);
             $client->dni = $request->dni;
             $client->full_name = $request->full_name;
+            $client->nombres = $request->nombres;
+            $client->apellido_paterno = $request->apellido_paterno;
+            $client->apellido_materno = $request->apellido_materno;
             $client->cell_phone = $request->cell_phone;
             $client->address = $request->address;
             $client->email = $request->email;
@@ -106,8 +118,14 @@ class ClientController extends Controller
      */
     public function destroy(string $id)
     {
-        $client = Client::find($id);
-        $client->delete();
-        return Redirect::route('clients.index');
+        try {
+            $client = Client::findOrFail($id);
+            $clientName = $client->full_name;
+            $client->delete();
+
+            return Redirect::route('clients.index')->with(['status' => true, 'message' => 'El cliente ' . $clientName . ' fue eliminado correctamente']);
+        } catch (Exception $exc) {
+            return Redirect::route('clients.index')->with(['status' => false, 'message' => 'No se pudo eliminar el cliente.']);
+        }
     }
 }

@@ -117,8 +117,14 @@ class ProviderController extends Controller
      */
     public function destroy(string $id)
     {
-        $provider = Provider::find($id);
-        $provider->delete();
-        return Redirect::route('providers.index');
+        try {
+            $provider = Provider::findOrFail($id);
+            $providerName = $provider->company;
+            $provider->delete();
+
+            return Redirect::route('providers.index')->with(['status' => true, 'message' => 'El proveedor ' . $providerName . ' fue eliminado correctamente']);
+        } catch (Exception $exc) {
+            return Redirect::route('providers.index')->with(['status' => false, 'message' => 'No se pudo eliminar el proveedor.']);
+        }
     }
 }

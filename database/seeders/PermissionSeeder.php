@@ -4,7 +4,10 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use Spatie\Permission\PermissionRegistrar;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionSeeder extends Seeder
 {
@@ -13,23 +16,54 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        // Permission::create(['name' => 'listado categorias']);
-        // Permission::create(['name' => 'crear categorias']);
-        // Permission::create(['name' => 'editar categorias']);
-        // Permission::create(['name' => 'eliminar categorias']);
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        Permission::create(['name' => 'Lectura categorias']);
-        Permission::create(['name' => 'Escritura categorias']);
+        $permissions = [
+            'Lectura categorias',
+            'Escritura categorias',
+            'Eliminar categorias',
+            'Lectura proveedores',
+            'Escritura proveedores',
+            'Eliminar proveedores',
+            'Lectura clientes',
+            'Escritura clientes',
+            'Eliminar clientes',
+            'Lectura productos',
+            'Escritura productos',
+            'Eliminar productos',
+            'Lectura roles',
+            'Escritura roles',
+            'Eliminar roles',
+            'Lectura usuarios',
+            'Escritura usuarios',
+            'Eliminar usuarios',
+            'Lectura ventas',
+            'Escritura ventas',
+            'Eliminar ventas',
+            'Lectura compras',
+            'Escritura compras',
+            'Eliminar compras',
+            'Lectura reportes',
+        ];
 
-        Permission::create(['name' => 'Lectura proveedores']);
-        Permission::create(['name' => 'Escritura proveedores']);
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => 'web',
+            ]);
+        }
 
-        Permission::create(['name' => 'Lectura clientes']);
-        Permission::create(['name' => 'Escritura clientes']);
+        $adminRole = Role::firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => 'web',
+        ]);
 
-        Permission::create(['name' => 'Lectura productos']);
-        Permission::create(['name' => 'Escritura productos']);
+        $adminRole->syncPermissions($permissions);
 
+        User::doesntHave('roles')->get()->each(function (User $user) use ($adminRole) {
+            $user->assignRole($adminRole);
+        });
 
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }
