@@ -10,26 +10,19 @@ use Exception;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    private const CATEGORY_MESSAGE = 'La categoria ';
+
     public function index()
     {
         $categories = Category::orderBy('name', 'ASC')->get();
         return Inertia::render('Categories/Index', ['categories' => $categories]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
         return Inertia::render('Categories/Create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -42,33 +35,30 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->save();
 
-            return Redirect::route('categories.index')->with(['status' => true, 'message' => 'La categoria ' . $category->name . ' fue registrada correctamente']);
+            return Redirect::route('categories.index')->with([
+                'status' => true,
+                'message' => self::CATEGORY_MESSAGE . $category->name . ' fue registrada correctamente'
+            ]);
         } catch (Exception $exc) {
-            return Redirect::route('categories.index')->with(['status' => false, 'message' => 'Existen errores en el formulario.']);
+            return Redirect::route('categories.index')->with([
+                'status' => false,
+                'message' => 'Existen errores en el formulario.'
+            ]);
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         $category = Category::find($id);
         return Inertia::render('Categories/Show', ['category' => $category]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(string $id)
     {
         $category = Category::findOrFail($id);
         return Inertia::render('Categories/Edit', ['category' => $category]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $request->validate([
@@ -81,20 +71,34 @@ class CategoryController extends Controller
             $category->description = $request->description;
             $category->save();
 
-            return Redirect::route('categories.index')->with(['status' => true, 'message' => 'La categoria ' . $category->name . ' fue actualizada correctamente']);
+            return Redirect::route('categories.index')->with([
+                'status' => true,
+                'message' => self::CATEGORY_MESSAGE . $category->name . ' fue actualizada correctamente'
+            ]);
         } catch (Exception $exc) {
-            return Redirect::route('categories.index')->with(['status' => false, 'message' => 'Existen errores en el formulario.']);
+            return Redirect::route('categories.index')->with([
+                'status' => false,
+                'message' => 'Existen errores en el formulario.'
+            ]);
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        try {
+            $category = Category::findOrFail($id);
+            $categoryName = $category->name;
+            $category->delete();
 
-        return Redirect::route('categories.index');
+            return Redirect::route('categories.index')->with([
+                'status' => true,
+                'message' => self::CATEGORY_MESSAGE . $categoryName . ' fue eliminada correctamente'
+            ]);
+        } catch (Exception $exc) {
+            return Redirect::route('categories.index')->with([
+                'status' => false,
+                'message' => 'No se pudo eliminar la categoria.'
+            ]);
+        }
     }
 }

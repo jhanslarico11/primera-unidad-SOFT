@@ -44,12 +44,14 @@ Route::middleware('auth')->group(function () {
         Route::get('/roles', 'index')->name('roles.index');
         Route::post('/roles/store', 'store')->name('roles.store');
         Route::put('/roles/update/{id}', 'update')->name('roles.update');
+        Route::delete('/roles/delete/{id}', 'destroy')->middleware('can:Eliminar roles')->name('roles.destroy');
     });
 
     Route::controller(UserController::class)->group(function () {
         Route::get('/users', 'index')->name('users.index');
         Route::post('/users/store', 'store')->name('users.store');
         Route::put('/users/update/{id}', 'update')->name('users.update');
+        Route::delete('/users/delete/{id}', 'destroy')->middleware('can:Eliminar usuarios')->name('users.destroy');
     });
 
 
@@ -60,7 +62,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/categories/show/{id}', 'show');
         Route::get('/categories/edit/{id}', 'edit');
         Route::put('/categories/update/{id}', 'update')->name('categories.update');
-        Route::delete('/categories/delete/{id}', 'destroy');
+        Route::delete('/categories/delete/{id}', 'destroy')->middleware('can:Eliminar categorias')->name('categories.destroy');
     });
 
     Route::controller(ProductController::class)->group(function () {
@@ -70,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/products/show/{id}', 'show');
         Route::get('/products/edit/{id}', 'edit');
         Route::post('/products/update/{id}', 'update')->name('products.update');
-        Route::delete('/products/delete/{id}', 'destroy');
+        Route::delete('/products/delete/{id}', 'destroy')->middleware('can:Eliminar productos')->name('products.destroy');
         Route::post('/products/import', 'import')->name('products.import');
         Route::post('/products/load', 'load')->name('products.load');
     });
@@ -82,7 +84,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/providers/{id}', 'show');
         Route::get('/providers/{id}/edit', 'edit');
         Route::put('/providers/{id}', 'update')->name('providers.update');
-        Route::delete('/providers/{id}', 'destroy');
+        Route::delete('/providers/{id}', 'destroy')->middleware('can:Eliminar proveedores')->name('providers.destroy');
     });
 
     Route::controller(BuyController::class)->group(function () {
@@ -92,7 +94,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/buys/{id}', 'show');
         Route::get('/buys/{id}/edit', 'edit');
         Route::put('/buys/{id}', 'update');
-        Route::delete('/buys/{id}', 'destroy');
+        Route::delete('/buys/{id}', 'destroy')->middleware('can:Eliminar compras')->name('buys.destroy');
     });
 
     Route::controller(ClientController::class)->group(function () {
@@ -102,7 +104,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/clients/{id}', 'show')->name('clients.show');
         Route::get('/clients/{id}/edit', 'edit')->name('clients.edit');
         Route::put('/clients/{id}', 'update')->name('clients.update');
-        Route::delete('/clients/{id}', 'destroy')->name('clients.destroy');
+        Route::delete('/clients/{id}', 'destroy')->middleware('can:Eliminar clientes')->name('clients.destroy');
     });
 
     Route::controller(SaleController::class)->group(function () {
@@ -112,7 +114,7 @@ Route::middleware('auth')->group(function () {
         // Route::get('/sales/{id}', 'show');
         // Route::get('/sales/{id}/edit', 'edit');
         // Route::put('/sales/{id}', 'update');
-        // Route::delete('/sales/{id}', 'destroy');
+        Route::delete('/sales/{id}', 'destroy')->middleware('can:Eliminar ventas')->name('sales.destroy');
     });
 
     Route::controller(ProductStockController::class)->group(function (){

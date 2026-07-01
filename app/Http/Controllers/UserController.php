@@ -37,15 +37,23 @@ class UserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
+            'dni' => 'nullable|digits:8|unique:users,dni',
             'name' => 'required',
-            'email' => 'required',
+            'nombres' => 'nullable|string|max:100',
+            'apellido_paterno' => 'nullable|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|confirmed'
         ]);
 
         DB::beginTransaction();
         try {
             $user = new User();
+            $user->dni = $request->dni;
             $user->name = $request->name;
+            $user->nombres = $request->nombres;
+            $user->apellido_paterno = $request->apellido_paterno;
+            $user->apellido_materno = $request->apellido_materno;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
             $user->status = $request->status;
@@ -83,14 +91,22 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         $request->validate([
+            'dni' => 'nullable|digits:8|unique:users,dni,' . $id,
             'name' => 'required',
-            'email' => 'required',
+            'nombres' => 'nullable|string|max:100',
+            'apellido_paterno' => 'nullable|string|max:100',
+            'apellido_materno' => 'nullable|string|max:100',
+            'email' => 'required|email|unique:users,email,' . $id,
         ]);
 
         DB::beginTransaction();
         try {
             $user = User::find($id);
+            $user->dni = $request->dni;
             $user->name = $request->name;
+            $user->nombres = $request->nombres;
+            $user->apellido_paterno = $request->apellido_paterno;
+            $user->apellido_materno = $request->apellido_materno;
             $user->email = $request->email;
             $user->save();
 
@@ -109,6 +125,22 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ((int) $id === auth()->id()) {
+                throw new Exception('No puedes eliminar tu propio usuario');
+            }
+
+            $user = User::findOrFail($id);
+            $userName = $user->name;
+            $user->syncRoles([]);
+            $user->delete();
+
+            DB::commit();
+            return Redirect::route('users.index')->with(['status' => true, 'message' => 'El usuario ' . $userName . ' fue eliminado correctamente']);
+        } catch (Exception $exc) {
+            DB::rollBack();
+            return Redirect::route('users.index')->with(['status' => false, 'message' => 'No se pudo eliminar el usuario: ' . $exc->getMessage()]);
+        }
     }
 }

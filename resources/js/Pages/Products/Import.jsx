@@ -13,7 +13,7 @@ import { toast } from 'react-toastify';
 
 export default function Import() {
     const [showModal, setShowModal] = useState(false);
-    const { data, setData, post, put, errors, reset, clearErrors } = useForm({ excel: '' });
+    const { data, setData, post, put, errors, reset, clearErrors, processing } = useForm({ excel: null });
 
     function openModal() {
         setShowModal(true);
@@ -27,7 +27,12 @@ export default function Import() {
 
     const submitProduct = (e) => {
         e.preventDefault();
+        if (!data.excel) {
+            return;
+        }
+
         post(route('products.import'), {
+            forceFormData: true,
             onSuccess: (res) => {
                 console.log('OK', res);
                 if (res.props.flash.status) {
@@ -54,13 +59,19 @@ export default function Import() {
                         <h2 className=" font-semibold "> IMPORTAR ARCHIVO EXCEL PRODUCTOS</h2>
                         <button type="button" onClick={closeModal} className=" bg-gray-300 hover:bg-gray-400 px-2"><HiXMark /></button>
                     </div>
-                    <form>
+                    <form onSubmit={submitProduct} encType="multipart/form-data">
                         <div>
-                            <input type="file" onChange={(e) => setData('excel', e.target.files[0])} />
+                            <input
+                                type="file"
+                                name="excel"
+                                accept=".xlsx,.xls,.csv"
+                                onChange={(e) => setData('excel', e.target.files[0])}
+                            />
+                            <InputError message={errors.excel} className="mt-2" />
                         </div>
                         <div className=" space-x-2 flex justify-end">
                             <SecondaryButton type="button" onClick={closeModal}>Cancelar</SecondaryButton>
-                            <PrimaryButton onClick={submitProduct}>Guardar</PrimaryButton>
+                            <PrimaryButton type="submit" disabled={!data.excel || processing}>Guardar</PrimaryButton>
                         </div>
                     </form>
                 </div>

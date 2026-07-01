@@ -7,6 +7,7 @@ use OpenApi\Annotations as OA;
 use App\Http\Controllers\APIs\CategoryController;
 use App\Http\Controllers\APIs\Resports\ProductsStockController;
 use App\Http\Controllers\APIs\Resports\ClientController;
+use App\Http\Controllers\Api\DniController;
 
 /**
  * @OA\Info(
@@ -91,7 +92,10 @@ Route::put('/categories/edit/{id}', [CategoryController::class, 'update']);
  *     )
  * )
  */
-Route::delete('/categories/delete/{id}', [CategoryController::class, 'destroy']);
+Route::delete('/categories/delete/{id}', [CategoryController::class, 'destroy'])
+    ->middleware(['auth:sanctum', 'can:Eliminar categorias']);
+
+Route::get('/consulta-dni/{dni}', [DniController::class, 'show'])->middleware(['web', 'auth']);
 
 /**
  * @OA\Get(

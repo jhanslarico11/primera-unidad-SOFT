@@ -28,6 +28,12 @@ return [
         'key' => env('RESEND_KEY'),
     ],
 
+    'decolecta' => [
+        'key' => env('DECOLECTA_API_KEY'),
+        'url' => env('DECOLECTA_API_URL', 'https://api.decolecta.com'),
+        'timeout' => env('DECOLECTA_TIMEOUT', 10),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),
